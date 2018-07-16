@@ -46,6 +46,7 @@ function LevelMaker.generate(width, height)
         else
             tileID = TILE_ID_GROUND
 
+            -- height at which we would spawn a potential jump block
             local blockHeight = 4
 
             for y = 7, height do
@@ -68,7 +69,8 @@ function LevelMaker.generate(width, height)
                             height = 16,
                             
                             -- select random frame from bush_ids whitelist, then random row for variance
-                            frame = BUSH_IDS[math.random(#BUSH_IDS)] + (math.random(4) - 1) * 7
+                            frame = BUSH_IDS[math.random(#BUSH_IDS)] + (math.random(4) - 1) * 7,
+                            collidable = false
                         }
                     )
                 end

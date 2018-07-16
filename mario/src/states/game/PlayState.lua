@@ -46,6 +46,7 @@ function PlayState:update(dt)
     -- update player and level
     self.player:update(dt)
     self.level:update(dt)
+    self:updateCamera()
 
     -- constrain player X no matter which state
     if self.player.x <= 0 then
@@ -53,8 +54,6 @@ function PlayState:update(dt)
     elseif self.player.x > TILE_SIZE * self.tileMap.width - self.player.width then
         self.player.x = TILE_SIZE * self.tileMap.width - self.player.width
     end
-
-    self:updateCamera()
 end
 
 function PlayState:render()

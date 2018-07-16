@@ -19,10 +19,10 @@
     https://freesound.org/people/Sirkoto51/sounds/393818/
 ]]
 
+love.graphics.setDefaultFilter('nearest', 'nearest')
 require 'src/Dependencies'
 
 function love.load()
-    love.graphics.setDefaultFilter('nearest', 'nearest')
     love.graphics.setFont(gFonts['medium'])
     love.window.setTitle('Super 50 Bros.')
 
@@ -31,7 +31,8 @@ function love.load()
     push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
         fullscreen = false,
         vsync = true,
-        resizable = true
+        resizable = true,
+        canvas = false
     })
 
     gStateMachine = StateMachine {
