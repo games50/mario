@@ -58,7 +58,7 @@ function love.load()
     end
 
     love.graphics.setDefaultFilter('nearest', 'nearest')
-    love.window.setTitle('tiles0')
+    love.window.setTitle('tiles1')
 
     push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
         fullscreen = false,
