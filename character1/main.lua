@@ -55,9 +55,9 @@ function love.load()
     -- amount by which we'll translate the scene to emulate a camera
     cameraScroll = 0
 
-    backgroundR = math.random(255)
-    backgroundG = math.random(255)
-    backgroundB = math.random(255)
+    backgroundR = math.random(255) / 255
+    backgroundG = math.random(255) / 255
+    backgroundB = math.random(255) / 255
 
     for y = 1, mapHeight do
         table.insert(tiles, {})
@@ -106,7 +106,7 @@ function love.draw()
         -- fractional camera offsets with a virtual resolution will result in weird pixelation and artifacting
         -- as things are attempted to be drawn fractionally and then forced onto a small virtual canvas
         love.graphics.translate(-math.floor(cameraScroll), 0)
-        love.graphics.clear(backgroundR, backgroundG, backgroundB, 255)
+        love.graphics.clear(backgroundR, backgroundG, backgroundB, 1)
         
         for y = 1, mapHeight do
             for x = 1, mapWidth do

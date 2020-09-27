@@ -55,14 +55,14 @@ require 'src/TileMap'
 
 
 gSounds = {
-    ['jump'] = love.audio.newSource('sounds/jump.wav'),
-    ['death'] = love.audio.newSource('sounds/death.wav'),
-    ['music'] = love.audio.newSource('sounds/music.wav'),
-    ['powerup-reveal'] = love.audio.newSource('sounds/powerup-reveal.wav'),
-    ['pickup'] = love.audio.newSource('sounds/pickup.wav'),
-    ['empty-block'] = love.audio.newSource('sounds/empty-block.wav'),
-    ['kill'] = love.audio.newSource('sounds/kill.wav'),
-    ['kill2'] = love.audio.newSource('sounds/kill2.wav')
+    ['jump'] = love.audio.newSource('sounds/jump.wav', 'static'),
+    ['death'] = love.audio.newSource('sounds/death.wav', 'static'),
+    ['music'] = love.audio.newSource('sounds/music.wav', 'static'),
+    ['powerup-reveal'] = love.audio.newSource('sounds/powerup-reveal.wav', 'static'),
+    ['pickup'] = love.audio.newSource('sounds/pickup.wav', 'static'),
+    ['empty-block'] = love.audio.newSource('sounds/empty-block.wav', 'static'),
+    ['kill'] = love.audio.newSource('sounds/kill.wav', 'static'),
+    ['kill2'] = love.audio.newSource('sounds/kill2.wav', 'static')
 }
 
 gTextures = {
