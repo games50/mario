@@ -36,9 +36,9 @@ function love.load()
     mapWidth = 20
     mapHeight = 20
 
-    backgroundR = math.random(255) / 255 / 255
-    backgroundG = math.random(255) / 255 / 255
-    backgroundB = math.random(255) / 255 / 255
+    backgroundR = math.random(255) / 255
+    backgroundG = math.random(255) / 255
+    backgroundB = math.random(255) / 255
 
     for y = 1, mapHeight do
         table.insert(tiles, {})
