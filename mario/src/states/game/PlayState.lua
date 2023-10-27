@@ -16,7 +16,7 @@ function PlayState:init()
     self.backgroundX = 0
 
     self.gravityOn = true
-    self.gravityAmount = 6
+    self.gravityAmount = 360
 
     self.player = Player({
         x = 0, y = 0,
