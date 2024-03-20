@@ -8,7 +8,7 @@
     cogden@cs50.harvard.edu
 ]]
 
-StartState = Class{__includes = BaseState}
+StartState = Class { __includes = BaseState }
 
 function StartState:init()
     self.map = LevelMaker.generate(100, 10)
@@ -17,7 +17,7 @@ end
 
 function StartState:update(dt)
     if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
-        gStateMachine:change('play')
+        gStateMachine:change('play', { levelWidth = 30, score = self.score })
     end
 end
 

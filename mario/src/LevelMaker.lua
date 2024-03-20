@@ -141,6 +141,8 @@ function LevelMaker.generate(width, height)
                                         -- gem has its own function to add to the player's score
                                         onConsume = function(player, object)
                                             gSounds['powerup-reveal']:play()
+                                            gStateMachine:change('play',
+                                                { levelWidth = math.floor(width * 4 / 3) + 20, score = player.score })
                                         end
                                     })
                                 end
