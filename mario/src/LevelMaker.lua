@@ -29,8 +29,13 @@ function LevelMaker.generate(width, height)
         table.insert(tiles, {})
     end
 
-    local lock = math.random(4)
+    local key = math.random(4)
     local lockX = math.random(10, width)
+    local keyX = math.random(10, width)
+    while keyX == lockX do
+        keyX = math.random(10, width)
+    end
+    local keyIsConsumed = false
 
     -- column by column generation instead of row; sometimes better for platformers
     for x = 1, width do
@@ -43,7 +48,7 @@ function LevelMaker.generate(width, height)
         end
 
         -- chance to just be emptiness
-        if math.random(7) == 1 and x ~= 1 and x ~= lockX then
+        if x ~= 1 and x ~= lockX and x ~= keyX and math.random(7) == 1 then
             for y = 7, height do
                 table.insert(tiles[y],
                     Tile(x, y, tileID, nil, tileset, topperset))
@@ -111,10 +116,44 @@ function LevelMaker.generate(width, height)
                         height = 16,
 
                         -- make it a random variant
-                        frame = 4 + lock,
+                        frame = 4 + key,
                         collidable = true,
                         hit = false,
                         solid = true,
+
+                        onCollide = function(obj)
+                            if keyIsConsumed then
+                                if obj.hit then
+                                    gSounds['empty-block']:play()
+                                else
+                                    gSounds['powerup-reveal']:play()
+                                    obj.hit = true
+                                end
+                            end
+                        end
+
+                    }
+                )
+            elseif x == keyX then
+                table.insert(objects,
+                    GameObject {
+                        texture = 'keys-and-locks',
+                        x = (x - 1) * TILE_SIZE,
+                        y = (blockHeight - 1) * TILE_SIZE,
+                        width = 16,
+                        height = 16,
+
+                        -- make it a random variant
+                        frame = key,
+                        collidable = true,
+                        consumable = true,
+                        solid = false,
+
+                        onConsume = function(player, object)
+                            gSounds['pickup']:play()
+                            player.score = player.score + 100
+                            keyIsConsumed = true
+                        end
 
                     }
                 )
