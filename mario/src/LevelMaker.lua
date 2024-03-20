@@ -22,10 +22,15 @@ function LevelMaker.generate(width, height)
     local tileset = math.random(20)
     local topperset = math.random(20)
 
+    local has_lock = false
+
     -- insert blank tables into tiles for later access
     for x = 1, height do
         table.insert(tiles, {})
     end
+
+    local lock = math.random(4)
+    local lockX = math.random(10, width)
 
     -- column by column generation instead of row; sometimes better for platformers
     for x = 1, width do
@@ -38,7 +43,7 @@ function LevelMaker.generate(width, height)
         end
 
         -- chance to just be emptiness
-        if math.random(7) == 1 and x ~= 1 then
+        if math.random(7) == 1 and x ~= 1 and x ~= lockX then
             for y = 7, height do
                 table.insert(tiles[y],
                     Tile(x, y, tileID, nil, tileset, topperset))
@@ -96,7 +101,24 @@ function LevelMaker.generate(width, height)
             end
 
             -- chance to spawn a block
-            if math.random(10) == 1 then
+            if x == lockX then
+                table.insert(objects,
+                    GameObject {
+                        texture = 'keys-and-locks',
+                        x = (x - 1) * TILE_SIZE,
+                        y = (blockHeight - 1) * TILE_SIZE,
+                        width = 16,
+                        height = 16,
+
+                        -- make it a random variant
+                        frame = 4 + lock,
+                        collidable = true,
+                        hit = false,
+                        solid = true,
+
+                    }
+                )
+            elseif math.random(10) == 1 then
                 table.insert(objects,
 
                     -- jump block
