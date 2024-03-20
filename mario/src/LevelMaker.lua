@@ -10,7 +10,7 @@
 
 LevelMaker = Class {}
 
-function LevelMaker.generate(width, height, onKeyConsume)
+function LevelMaker.generate(width, height, onKeyConsume, onUnlock)
     local tiles = {}
     local entities = {}
     local objects = {}
@@ -125,6 +125,7 @@ function LevelMaker.generate(width, height, onKeyConsume)
                                 if obj.hit then
                                     gSounds['empty-block']:play()
                                 else
+                                    onUnlock()
                                     gSounds['powerup-reveal']:play()
                                     obj.hit = true
                                     table.insert(objects, GameObject {
@@ -138,7 +139,6 @@ function LevelMaker.generate(width, height, onKeyConsume)
                                         consumable = true,
                                         solid = false,
 
-                                        -- gem has its own function to add to the player's score
                                         onConsume = function(player, object)
                                             gSounds['powerup-reveal']:play()
                                             gStateMachine:change('play',

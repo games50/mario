@@ -10,6 +10,7 @@ PlayState = Class { __includes = BaseState }
 function PlayState:init()
     self.keyIsConsumed = false
     self.keyColor = nil
+    self.lockIsUnlocked = false
 end
 
 function PlayState:enter(params)
@@ -18,9 +19,13 @@ function PlayState:enter(params)
         self.keyColor = color
     end
 
+    local handleUnlock = function()
+        self.lockIsUnlocked = true
+    end
+
     self.camX = 0
     self.camY = 0
-    self.level = LevelMaker.generate(params.levelWidth, 10, handleKeyConsume)
+    self.level = LevelMaker.generate(params.levelWidth, 10, handleKeyConsume, handleUnlock)
     self.tileMap = self.level.tileMap
     self.background = math.random(3)
     self.backgroundX = 0
@@ -97,8 +102,10 @@ function PlayState:render()
     love.graphics.print(tostring(self.player.score), 4, 4)
 
     -- render key
-    if self.keyIsConsumed then
-        love.graphics.draw(gTextures['keys-and-locks'], gFrames['keys-and-locks'][self.keyColor], VIRTUAL_WIDTH - 18, 0)
+    if self.lockIsUnlocked then
+        love.graphics.draw(gTextures['flags'], gFrames['goals'][self.keyColor + 2], VIRTUAL_WIDTH - 18, 3)
+    elseif self.keyIsConsumed then
+        love.graphics.draw(gTextures['keys-and-locks'], gFrames['keys-and-locks'][self.keyColor], VIRTUAL_WIDTH - 18, 3)
     end
 end
 
