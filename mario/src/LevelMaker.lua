@@ -22,8 +22,6 @@ function LevelMaker.generate(width, height)
     local tileset = math.random(20)
     local topperset = math.random(20)
 
-    local has_lock = false
-
     -- insert blank tables into tiles for later access
     for x = 1, height do
         table.insert(tiles, {})
@@ -128,6 +126,22 @@ function LevelMaker.generate(width, height)
                                 else
                                     gSounds['powerup-reveal']:play()
                                     obj.hit = true
+                                    table.insert(objects, GameObject {
+                                        texture = 'flags',
+                                        x = 0 * TILE_SIZE,
+                                        y = (blockHeight - 1) * TILE_SIZE,
+                                        width = 16,
+                                        height = 48,
+                                        frame = key + 2,
+                                        collidable = true,
+                                        consumable = true,
+                                        solid = false,
+
+                                        -- gem has its own function to add to the player's score
+                                        onConsume = function(player, object)
+                                            gSounds['powerup-reveal']:play()
+                                        end
+                                    })
                                 end
                             end
                         end
