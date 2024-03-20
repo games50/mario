@@ -45,10 +45,6 @@ function PlayState:enter(params)
 end
 
 function PlayState:update(dt)
-    if love.keyboard.wasPressed('r') then
-        gStateMachine:change('start')
-    end
-
     Timer.update(dt)
 
     -- remove any nils from pickups, etc.

@@ -15,9 +15,13 @@ function StartState:init()
     self.background = math.random(3)
 end
 
+function StartState:enter(params)
+    self.score = params and params.score or 0
+end
+
 function StartState:update(dt)
     if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
-        gStateMachine:change('play', { levelWidth = 30, score = self.score })
+        gStateMachine:change('play', { levelWidth = 30 })
     end
 end
 
@@ -38,4 +42,11 @@ function StartState:render()
     love.graphics.printf('Press Enter', 1, VIRTUAL_HEIGHT / 2 + 17, VIRTUAL_WIDTH, 'center')
     love.graphics.setColor(255, 255, 255, 255)
     love.graphics.printf('Press Enter', 0, VIRTUAL_HEIGHT / 2 + 16, VIRTUAL_WIDTH, 'center')
+
+    love.graphics.setFont(gFonts['medium'])
+    love.graphics.setColor(255, 255, 255, 255)
+    love.graphics.printf('SCORE: ' .. self.score, 1, VIRTUAL_HEIGHT / 2 + 50, VIRTUAL_WIDTH, 'center')
+    love.graphics.setColor(0, 0, 0, 255)
+    love.graphics.printf('SCORE: ' .. self.score, 0, VIRTUAL_HEIGHT / 2 + 49, VIRTUAL_WIDTH, 'center')
+    love.graphics.setColor(255, 255, 255, 255)
 end

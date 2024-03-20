@@ -6,12 +6,12 @@
     cogden@cs50.harvard.edu
 ]]
 
-PlayerWalkingState = Class{__includes = BaseState}
+PlayerWalkingState = Class { __includes = BaseState }
 
 function PlayerWalkingState:init(player)
     self.player = player
     self.animation = Animation {
-        frames = {10, 11},
+        frames = { 10, 11 },
         interval = 0.1
     }
     self.player.currentAnimation = self.animation
@@ -25,7 +25,8 @@ function PlayerWalkingState:update(dt)
         self.player:changeState('idle')
     else
         local tileBottomLeft = self.player.map:pointToTile(self.player.x + 1, self.player.y + self.player.height)
-        local tileBottomRight = self.player.map:pointToTile(self.player.x + self.player.width - 1, self.player.y + self.player.height)
+        local tileBottomRight = self.player.map:pointToTile(self.player.x + self.player.width - 1,
+            self.player.y + self.player.height)
 
         -- temporarily shift player down a pixel to test for game objects beneath
         self.player.y = self.player.y + 1
@@ -53,7 +54,7 @@ function PlayerWalkingState:update(dt)
     for k, entity in pairs(self.player.level.entities) do
         if entity:collides(self.player) then
             gSounds['death']:play()
-            gStateMachine:change('start')
+            gStateMachine:change('start', { self.player.score })
         end
     end
 

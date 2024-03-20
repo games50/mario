@@ -6,13 +6,13 @@
     cogden@cs50.harvard.edu
 ]]
 
-PlayerJumpState = Class{__includes = BaseState}
+PlayerJumpState = Class { __includes = BaseState }
 
 function PlayerJumpState:init(player, gravity)
     self.player = player
     self.gravity = gravity
     self.animation = Animation {
-        frames = {3},
+        frames = { 3 },
         interval = 1
     }
     self.player.currentAnimation = self.animation
@@ -44,7 +44,7 @@ function PlayerJumpState:update(dt)
         self.player.dy = 0
         self.player:changeState('falling')
 
-    -- else test our sides for blocks
+        -- else test our sides for blocks
     elseif love.keyboard.isDown('left') then
         self.player.direction = 'left'
         self.player.x = self.player.x - PLAYER_WALK_SPEED * dt
@@ -75,7 +75,7 @@ function PlayerJumpState:update(dt)
     for k, entity in pairs(self.player.level.entities) do
         if entity:collides(self.player) then
             gSounds['death']:play()
-            gStateMachine:change('start')
+            gStateMachine:change('start', { score = self.player.score })
         end
     end
 end

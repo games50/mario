@@ -8,13 +8,13 @@
     cogden@cs50.harvard.edu
 ]]
 
-PlayerFallingState = Class{__includes = BaseState}
+PlayerFallingState = Class { __includes = BaseState }
 
 function PlayerFallingState:init(player, gravity)
     self.player = player
     self.gravity = gravity
     self.animation = Animation {
-        frames = {3},
+        frames = { 3 },
         interval = 1
     }
     self.player.currentAnimation = self.animation
@@ -27,12 +27,13 @@ function PlayerFallingState:update(dt)
 
     -- look at two tiles below our feet and check for collisions
     local tileBottomLeft = self.player.map:pointToTile(self.player.x + 1, self.player.y + self.player.height)
-    local tileBottomRight = self.player.map:pointToTile(self.player.x + self.player.width - 1, self.player.y + self.player.height)
+    local tileBottomRight = self.player.map:pointToTile(self.player.x + self.player.width - 1,
+        self.player.y + self.player.height)
 
     -- if we get a collision beneath us, go into either walking or idle
     if (tileBottomLeft and tileBottomRight) and (tileBottomLeft:collidable() or tileBottomRight:collidable()) then
         self.player.dy = 0
-        
+
         -- set the player to be walking or idle on landing depending on input
         if love.keyboard.isDown('left') or love.keyboard.isDown('right') then
             self.player:changeState('walking')
@@ -41,13 +42,13 @@ function PlayerFallingState:update(dt)
         end
 
         self.player.y = (tileBottomLeft.y - 1) * TILE_SIZE - self.player.height
-    
-    -- go back to start if we fall below the map boundary
+
+        -- go back to start if we fall below the map boundary
     elseif self.player.y > VIRTUAL_HEIGHT then
         gSounds['death']:play()
-        gStateMachine:change('start')
-    
-    -- check side collisions and reset position
+        gStateMachine:change('start', { score = self.player.score })
+
+        -- check side collisions and reset position
     elseif love.keyboard.isDown('left') then
         self.player.direction = 'left'
         self.player.x = self.player.x - PLAYER_WALK_SPEED * dt
