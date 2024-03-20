@@ -34,6 +34,7 @@ function LevelMaker.generate(width, height)
         keyX = math.random(10, width)
     end
     local keyIsConsumed = false
+    local flagHeight = nil
 
     -- column by column generation instead of row; sometimes better for platformers
     for x = 1, width do
@@ -46,7 +47,7 @@ function LevelMaker.generate(width, height)
         end
 
         -- chance to just be emptiness
-        if x ~= 1 and x ~= lockX and x ~= keyX and math.random(7) == 1 then
+        if x ~= 1 and x ~= width and x ~= lockX and x ~= keyX and math.random(7) == 1 then
             for y = 7, height do
                 table.insert(tiles[y],
                     Tile(x, y, tileID, nil, tileset, topperset))
@@ -128,8 +129,8 @@ function LevelMaker.generate(width, height)
                                     obj.hit = true
                                     table.insert(objects, GameObject {
                                         texture = 'flags',
-                                        x = 0 * TILE_SIZE,
-                                        y = (blockHeight - 1) * TILE_SIZE,
+                                        x = (width - 1) * TILE_SIZE,
+                                        y = (flagHeight - 1) * TILE_SIZE,
                                         width = 16,
                                         height = 48,
                                         frame = key + 2,
@@ -171,7 +172,7 @@ function LevelMaker.generate(width, height)
 
                     }
                 )
-            elseif math.random(10) == 1 then
+            elseif math.random(10) == 1 and x ~= width then
                 table.insert(objects,
 
                     -- jump block
@@ -229,6 +230,10 @@ function LevelMaker.generate(width, height)
                         end
                     }
                 )
+            end
+
+            if x == width then
+                flagHeight = blockHeight
             end
         end
     end
