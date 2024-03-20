@@ -10,7 +10,7 @@
 
 LevelMaker = Class {}
 
-function LevelMaker.generate(width, height)
+function LevelMaker.generate(width, height, onKeyConsume)
     local tiles = {}
     local entities = {}
     local objects = {}
@@ -169,6 +169,7 @@ function LevelMaker.generate(width, height)
                         onConsume = function(player, object)
                             gSounds['pickup']:play()
                             player.score = player.score + 100
+                            onKeyConsume(key)
                             keyIsConsumed = true
                         end
 

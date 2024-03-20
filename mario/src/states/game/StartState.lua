@@ -44,9 +44,9 @@ function StartState:render()
     love.graphics.printf('Press Enter', 0, VIRTUAL_HEIGHT / 2 + 16, VIRTUAL_WIDTH, 'center')
 
     love.graphics.setFont(gFonts['medium'])
-    love.graphics.setColor(255, 255, 255, 255)
+    love.graphics.setColor(0, 0, 0, 1)
     love.graphics.printf('SCORE: ' .. self.score, 1, VIRTUAL_HEIGHT / 2 + 50, VIRTUAL_WIDTH, 'center')
-    love.graphics.setColor(0, 0, 0, 255)
+    love.graphics.setColor(1, 1, 1, 1)
     love.graphics.printf('SCORE: ' .. self.score, 0, VIRTUAL_HEIGHT / 2 + 49, VIRTUAL_WIDTH, 'center')
-    love.graphics.setColor(255, 255, 255, 255)
+    love.graphics.setColor(1, 1, 1, 1)
 end

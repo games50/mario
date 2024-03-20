@@ -8,13 +8,19 @@
 PlayState = Class { __includes = BaseState }
 
 function PlayState:init()
-
+    self.keyIsConsumed = false
+    self.keyColor = nil
 end
 
 function PlayState:enter(params)
+    local handleKeyConsume = function(color)
+        self.keyIsConsumed = true
+        self.keyColor = color
+    end
+
     self.camX = 0
     self.camY = 0
-    self.level = LevelMaker.generate(params.levelWidth, 10)
+    self.level = LevelMaker.generate(params.levelWidth, 10, handleKeyConsume)
     self.tileMap = self.level.tileMap
     self.background = math.random(3)
     self.backgroundX = 0
@@ -89,6 +95,11 @@ function PlayState:render()
     love.graphics.print(tostring(self.player.score), 5, 5)
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.print(tostring(self.player.score), 4, 4)
+
+    -- render key
+    if self.keyIsConsumed then
+        love.graphics.draw(gTextures['keys-and-locks'], gFrames['keys-and-locks'][self.keyColor], VIRTUAL_WIDTH - 18, 0)
+    end
 end
 
 function PlayState:updateCamera()
