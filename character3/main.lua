@@ -1,5 +1,5 @@
 --[[
-    GD50
+    CS50 2D
     Super Mario Bros. Remake
 
     Author: Colton Ogden
@@ -35,6 +35,7 @@ SKY = 2
 GROUND = 1
 
 function love.load()
+    love.graphics.setDefaultFilter('nearest', 'nearest')
     math.randomseed(os.time())
 
     tiles = {}
@@ -87,18 +88,19 @@ function love.load()
         end
     end
 
-    love.graphics.setDefaultFilter('nearest', 'nearest')
     love.window.setTitle('tiles0')
 
-    push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
+    love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT, {
         fullscreen = false,
-        resizable = true,
-        vsync = true
+        vsync = true,
+        resizable = true
     })
+
+    push.setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, { upscale = 'normal' })
 end
 
 function love.resize(w, h)
-    push:resize(w, h)
+    push.resize(w, h)
 end
 
 function love.keypressed(key)
@@ -129,7 +131,7 @@ function love.update(dt)
 end
 
 function love.draw()
-    push:start()
+    push.start()
         -- translate scene by camera scroll amount; negative shifts have the effect of making it seem
         -- like we're actually moving right and vice-versa; note the use of math.floor, as rendering
         -- fractional camera offsets with a virtual resolution will result in weird pixelation and artifacting
@@ -158,5 +160,5 @@ function love.draw()
 
             -- lastly, the origin offsets relative to 0,0 on the sprite (set here to the sprite's center)
             CHARACTER_WIDTH / 2, CHARACTER_HEIGHT / 2)
-    push:finish()
+    push.finish()
 end

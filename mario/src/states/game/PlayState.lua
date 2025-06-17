@@ -1,5 +1,5 @@
 --[[
-    GD50
+    CS50 2D
     Super Mario Bros. Remake
 
     -- PlayState Class --
@@ -16,7 +16,7 @@ function PlayState:init()
     self.backgroundX = 0
 
     self.gravityOn = true
-    self.gravityAmount = 6
+    self.gravityAmount = 900
 
     self.player = Player({
         x = 0, y = 0,

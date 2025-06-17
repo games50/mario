@@ -1,5 +1,5 @@
 --[[
-    GD50
+    CS50 2D
     Super Mario Bros. Remake
 
     -- Player Class --
@@ -15,13 +15,13 @@ function Player:init(def)
     self.score = 0
 end
 
-function Player:update(dt)
-    Entity.update(self, dt)
-end
+-- function Player:update(dt)
+--     Entity.update(self, dt)
+-- end
 
-function Player:render()
-    Entity.render(self)
-end
+-- function Player:render()
+--     Entity.render(self)
+-- end
 
 function Player:checkLeftCollisions(dt)
     -- check for left two tiles collision
@@ -75,7 +75,7 @@ function Player:checkObjectCollisions()
             if object.solid then
                 table.insert(collidedObjects, object)
             elseif object.consumable then
-                object.onConsume(self)
+                object.onConsume(self, object)
                 table.remove(self.level.objects, k)
             end
         end

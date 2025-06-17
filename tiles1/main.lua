@@ -1,5 +1,5 @@
 --[[
-    GD50
+    CS50 2D
     Super Mario Bros. Remake
 
     Author: Colton Ogden
@@ -28,6 +28,7 @@ SKY = 2
 GROUND = 1
 
 function love.load()
+    love.graphics.setDefaultFilter('nearest', 'nearest')
     math.randomseed(os.time())
 
     tiles = {}
@@ -42,9 +43,9 @@ function love.load()
     -- amount by which we'll translate the scene to emulate a camera
     cameraScroll = 0
 
-    backgroundR = math.random(255) / 255 / 255
-    backgroundG = math.random(255) / 255 / 255
-    backgroundB = math.random(255) / 255 / 255
+    backgroundR = math.random(255) / 255
+    backgroundG = math.random(255) / 255
+    backgroundB = math.random(255) / 255
 
     for y = 1, mapHeight do
         table.insert(tiles, {})
@@ -57,18 +58,19 @@ function love.load()
         end
     end
 
-    love.graphics.setDefaultFilter('nearest', 'nearest')
     love.window.setTitle('tiles0')
 
-    push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
+    love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT, {
         fullscreen = false,
-        resizable = true,
-        vsync = true
+        vsync = true,
+        resizable = true
     })
+
+    push.setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, { upscale = 'normal' })
 end
 
 function love.resize(w, h)
-    push:resize(w, h)
+    push.resize(w, h)
 end
 
 function love.keypressed(key)
@@ -87,7 +89,7 @@ function love.update(dt)
 end
 
 function love.draw()
-    push:start()
+    push.start()
         -- translate scene by camera scroll amount; negative shifts have the effect of making it seem
         -- like we're actually moving right and vice-versa; note the use of math.floor, as rendering
         -- fractional camera offsets with a virtual resolution will result in weird pixelation and artifacting
@@ -101,5 +103,5 @@ function love.draw()
                 love.graphics.draw(tilesheet, quads[tile.id], (x - 1) * TILE_SIZE, (y - 1) * TILE_SIZE)
             end
         end
-    push:finish()
+    push.finish()
 end

@@ -1,5 +1,5 @@
 --[[
-    GD50
+    CS50 2D
     Super Mario Bros. Remake
 
     Author: Colton Ogden
@@ -25,7 +25,7 @@ end
 
 function PlayerJumpState:update(dt)
     self.player.currentAnimation:update(dt)
-    self.player.dy = self.player.dy + self.gravity
+    self.player.dy = self.player.dy + self.gravity * dt
     self.player.y = self.player.y + (self.player.dy * dt)
 
     -- go into the falling state when y velocity is positive
@@ -33,7 +33,7 @@ function PlayerJumpState:update(dt)
         self.player:changeState('falling')
     end
 
-    self.player.y = self.player.y + (self.player.dy * dt)
+    -- self.player.y = self.player.y + (self.player.dy * dt)
 
     -- look at two tiles above our head and check for collisions; 3 pixels of leeway for getting through gaps
     local tileLeft = self.player.map:pointToTile(self.player.x + 3, self.player.y)
@@ -55,19 +55,35 @@ function PlayerJumpState:update(dt)
         self.player:checkRightCollisions(dt)
     end
 
-    -- check if we've collided with any collidable game objects
-    for k, object in pairs(self.player.level.objects) do
-        if object:collides(self.player) then
-            if object.solid then
-                object.onCollide(object)
+    -- store previous Y position before updating
+    local prevY = self.player.y - (self.player.dy * dt)
+    local prevBottom = prevY + self.player.height
 
+    for k, object in pairs(self.player.level.objects) do
+        if object.solid then
+            local prevHead = prevY
+            local currHead = self.player.y
+            local blockBottom = object.y + object.height
+            local blockLeft = object.x
+            local blockRight = object.x + object.width
+            local playerLeft = self.player.x
+            local playerRight = self.player.x + self.player.width
+
+            -- check for vertical and horizontal overlap (bump from below)
+            if self.player.dy < 0 and
+               prevHead >= blockBottom and
+               currHead <= blockBottom and
+               playerRight > blockLeft and
+               playerLeft < blockRight then
+
+                object.onCollide(object)
                 self.player.y = object.y + object.height
                 self.player.dy = 0
                 self.player:changeState('falling')
-            elseif object.consumable then
-                object.onConsume(self.player)
-                table.remove(self.player.level.objects, k)
             end
+        elseif object.consumable and object:collides(self.player) then
+            object.onConsume(self.player)
+            table.remove(self.player.level.objects, k)
         end
     end
 

@@ -1,5 +1,5 @@
 --[[
-    GD50
+    CS50 2D
     Super Mario Bros. Remake
 
     Author: Colton Ogden
@@ -14,44 +14,44 @@
 --
 -- libraries
 --
-Class = require 'lib/class'
-push = require 'lib/push'
-Timer = require 'lib/knife.timer'
+Class = require 'lib.class'
+push = require 'lib.push'
+Timer = require 'lib.knife.timer'
 
 --
 -- our own code
 --
 
 -- utility
-require 'src/constants'
-require 'src/StateMachine'
-require 'src/Util'
+require 'src.constants'
+require 'src.StateMachine'
+require 'src.Util'
 
 -- game states
-require 'src/states/BaseState'
-require 'src/states/game/PlayState'
-require 'src/states/game/StartState'
+require 'src.states.BaseState'
+require 'src.states.game.PlayState'
+require 'src.states.game.StartState'
 
 -- entity states
-require 'src/states/entity/PlayerFallingState'
-require 'src/states/entity/PlayerIdleState'
-require 'src/states/entity/PlayerJumpState'
-require 'src/states/entity/PlayerWalkingState'
+require 'src.states.entity.PlayerFallingState'
+require 'src.states.entity.PlayerIdleState'
+require 'src.states.entity.PlayerJumpState'
+require 'src.states.entity.PlayerWalkingState'
 
-require 'src/states/entity/snail/SnailChasingState'
-require 'src/states/entity/snail/SnailIdleState'
-require 'src/states/entity/snail/SnailMovingState'
+require 'src.states.entity.snail.SnailChasingState'
+require 'src.states.entity.snail.SnailIdleState'
+require 'src.states.entity.snail.SnailMovingState'
 
 -- general
-require 'src/Animation'
-require 'src/Entity'
-require 'src/GameObject'
-require 'src/GameLevel'
-require 'src/LevelMaker'
-require 'src/Player'
-require 'src/Snail'
-require 'src/Tile'
-require 'src/TileMap'
+require 'src.Animation'
+require 'src.Entity'
+require 'src.GameObject'
+require 'src.GameLevel'
+require 'src.LevelMaker'
+require 'src.Player'
+require 'src.Snail'
+require 'src.Tile'
+require 'src.TileMap'
 
 
 gSounds = {

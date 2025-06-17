@@ -1,5 +1,5 @@
 --[[
-    GD50
+    CS50 2D
     Super Mario Bros. Remake
 
     Author: Colton Ogden
@@ -38,9 +38,9 @@ CHARACTER_WIDTH = 16
 CHARACTER_HEIGHT = 20
 
 CHARACTER_MOVE_SPEED = 40
-JUMP_VELOCITY = -200
+JUMP_VELOCITY = -300
 
-GRAVITY = 7
+GRAVITY = 980
 
 -- camera scroll speed
 CAMERA_SCROLL_SPEED = 40
@@ -50,6 +50,7 @@ SKY = 5
 GROUND = 3
 
 function love.load()
+    love.graphics.setDefaultFilter('nearest', 'nearest')
     math.randomseed(os.time())
     
     -- tilesheet image and quads for it, which will map to our IDs
@@ -109,18 +110,19 @@ function love.load()
 
     tiles = generateLevel()
 
-    love.graphics.setDefaultFilter('nearest', 'nearest')
     love.window.setTitle('level0')
 
-    push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
+    love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT, {
         fullscreen = false,
-        resizable = true,
-        vsync = true
+        vsync = true,
+        resizable = true
     })
+
+    push.setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, { upscale = 'normal' })
 end
 
 function love.resize(w, h)
-    push:resize(w, h)
+    push.resize(w, h)
 end
 
 function love.keypressed(key)
@@ -143,7 +145,7 @@ end
 
 function love.update(dt)
     -- apply velocity to character Y
-    characterDY = characterDY + GRAVITY
+    characterDY = characterDY + GRAVITY * dt
     characterY = characterY + characterDY * dt
 
     -- if we've gone below the map limit, set DY to 0
@@ -181,7 +183,7 @@ function love.update(dt)
 end
 
 function love.draw()
-    push:start()
+    push.start()
         -- translate scene by camera scroll amount; negative shifts have the effect of making it seem
         -- like we're actually moving right and vice-versa; note the use of math.floor, as rendering
         -- fractional camera offsets with a virtual resolution will result in weird pixelation and artifacting
@@ -217,7 +219,7 @@ function love.draw()
 
             -- lastly, the origin offsets relative to 0,0 on the sprite (set here to the sprite's center)
             CHARACTER_WIDTH / 2, CHARACTER_HEIGHT / 2)
-    push:finish()
+    push.finish()
 end
 
 function generateLevel()

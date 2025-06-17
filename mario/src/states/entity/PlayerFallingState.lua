@@ -1,5 +1,5 @@
 --[[
-    GD50
+    CS50 2D
     Super Mario Bros. Remake
 
     -- PlayerFallingState Class --
@@ -22,7 +22,7 @@ end
 
 function PlayerFallingState:update(dt)
     self.player.currentAnimation:update(dt)
-    self.player.dy = self.player.dy + self.gravity
+    self.player.dy = self.player.dy + self.gravity * dt
     self.player.y = self.player.y + (self.player.dy * dt)
 
     -- look at two tiles below our feet and check for collisions
