@@ -6,8 +6,10 @@
     cogden@cs50.harvard.edu
 ]]
 
+Class = require 'class'
 push = require 'push'
 
+require 'Animation'
 require 'Util'
 
 -- size of our actual window
@@ -46,9 +48,24 @@ function love.load()
     characterSheet = love.graphics.newImage('character.png')
     characterQuads = GenerateQuads(characterSheet, CHARACTER_WIDTH, CHARACTER_HEIGHT)
 
+    -- two animations depending on whether we're moving
+    idleAnimation = Animation {
+        frames = {1},
+        interval = 1
+    }
+    movingAnimation = Animation {
+        frames = {10, 11},
+        interval = 0.2
+    }
+
+    currentAnimation = idleAnimation
+
     -- place character in middle of the screen, above the top ground tile
     characterX = VIRTUAL_WIDTH / 2 - (CHARACTER_WIDTH / 2)
     characterY = ((7 - 1) * TILE_SIZE) - CHARACTER_HEIGHT
+
+    -- direction the character is facing
+    direction = 'right'
     
     mapWidth = 20
     mapHeight = 20
@@ -71,7 +88,7 @@ function love.load()
         end
     end
 
-    love.window.setTitle('tiles0')
+    love.window.setTitle('character-3')
 
     love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT, {
         fullscreen = false,
@@ -93,12 +110,24 @@ function love.keypressed(key)
 end
 
 function love.update(dt)
+    -- update the animation so it scrolls through the right frames
+    currentAnimation:update(dt)
+
     -- update camera scroll based on user input
     if love.keyboard.isDown('left') then
         characterX = characterX - CHARACTER_MOVE_SPEED * dt
+        currentAnimation = movingAnimation
+        direction = 'left'
     elseif love.keyboard.isDown('right') then
         characterX = characterX + CHARACTER_MOVE_SPEED * dt
+        currentAnimation = movingAnimation
+        direction = 'right'
+    else
+        currentAnimation = idleAnimation
     end
+
+    -- set the camera's left edge to half the screen to the left of the player's center
+    cameraScroll = characterX - (VIRTUAL_WIDTH / 2) + (CHARACTER_WIDTH / 2)
 end
 
 function love.draw()
@@ -117,7 +146,19 @@ function love.draw()
             end
         end
 
-        -- draw character
-        love.graphics.draw(characterSheet, characterQuads[1], math.floor(characterX), math.floor(characterY))
+        -- draw character, this time getting the current frame from the animation
+        -- we also check for our direction and scale by -1 on the X axis if we're facing left
+        -- when we scale by -1, we have to set the origin to the center of the sprite as well for proper flipping
+        love.graphics.draw(characterSheet, characterQuads[currentAnimation:getCurrentFrame()], 
+
+            -- X and Y we draw at need to be shifted by half our width and height because we're setting the origin
+            -- to that amount for proper scaling, which reverse-shifts rendering
+            math.floor(characterX) + CHARACTER_WIDTH / 2, math.floor(characterY) + CHARACTER_HEIGHT / 2, 
+
+            -- 0 rotation, then the X and Y scales
+            0, direction == 'left' and -1 or 1, 1,
+
+            -- lastly, the origin offsets relative to 0,0 on the sprite (set here to the sprite's center)
+            CHARACTER_WIDTH / 2, CHARACTER_HEIGHT / 2)
     push.finish()
 end

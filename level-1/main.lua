@@ -22,33 +22,57 @@ VIRTUAL_HEIGHT = 144
 
 TILE_SIZE = 16
 
+-- number of tiles in each tile set
+TILE_SET_WIDTH = 5
+TILE_SET_HEIGHT = 4
+
+-- number of tile sets in sheet
+TILE_SETS_WIDE = 6
+TILE_SETS_TALL = 10
+
+-- number of topper sets in sheet
+TOPPER_SETS_WIDE = 6
+TOPPER_SETS_TALL = 18
+
 CHARACTER_WIDTH = 16
 CHARACTER_HEIGHT = 20
 
 CHARACTER_MOVE_SPEED = 40
+JUMP_VELOCITY = -300
+
+GRAVITY = 980
 
 -- camera scroll speed
 CAMERA_SCROLL_SPEED = 40
 
 -- tile ID constants
-SKY = 2
-GROUND = 1
+SKY = 5
+GROUND = 3
 
 function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest')
     math.randomseed(os.time())
-
-    tiles = {}
     
     -- tilesheet image and quads for it, which will map to our IDs
     tilesheet = love.graphics.newImage('tiles.png')
     quads = GenerateQuads(tilesheet, TILE_SIZE, TILE_SIZE)
 
+    topperSheet = love.graphics.newImage('tile_tops.png')
+    topperQuads = GenerateQuads(topperSheet, TILE_SIZE, TILE_SIZE)
+
+    -- divide quad tables into tile sets
+    tilesets = GenerateTileSets(quads, TILE_SETS_WIDE, TILE_SETS_TALL, TILE_SET_WIDTH, TILE_SET_HEIGHT)
+    toppersets = GenerateTileSets(topperQuads, TOPPER_SETS_WIDE, TOPPER_SETS_TALL, TILE_SET_WIDTH, TILE_SET_HEIGHT)
+
+    -- random tile set and topper set for the level
+    tileset = math.random(#tilesets)
+    topperset = math.random(#toppersets)
+
     -- texture for the character
     characterSheet = love.graphics.newImage('character.png')
     characterQuads = GenerateQuads(characterSheet, CHARACTER_WIDTH, CHARACTER_HEIGHT)
 
-    -- two animations depending on whether we're moving
+    -- three animations depending on whether we're moving, jumping, or still
     idleAnimation = Animation {
         frames = {1},
         interval = 1
@@ -57,6 +81,10 @@ function love.load()
         frames = {10, 11},
         interval = 0.2
     }
+    jumpAnimation = Animation {
+        frames = {3},
+        interval = 1
+    }
 
     currentAnimation = idleAnimation
 
@@ -64,10 +92,13 @@ function love.load()
     characterX = VIRTUAL_WIDTH / 2 - (CHARACTER_WIDTH / 2)
     characterY = ((7 - 1) * TILE_SIZE) - CHARACTER_HEIGHT
 
+    -- for jumping and applying gravity
+    characterDY = 0
+
     -- direction the character is facing
     direction = 'right'
     
-    mapWidth = 20
+    mapWidth = 50
     mapHeight = 20
 
     -- amount by which we'll translate the scene to emulate a camera
@@ -77,18 +108,9 @@ function love.load()
     backgroundG = math.random(255) / 255
     backgroundB = math.random(255) / 255
 
-    for y = 1, mapHeight do
-        table.insert(tiles, {})
-        
-        for x = 1, mapWidth do
-            -- sky and bricks; this ID directly maps to whatever quad we want to render
-            table.insert(tiles[y], {
-                id = y < 7 and SKY or GROUND
-            })
-        end
-    end
+    tiles = generateLevel()
 
-    love.window.setTitle('tiles0')
+    love.window.setTitle('level-1')
 
     love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT, {
         fullscreen = false,
@@ -107,20 +129,50 @@ function love.keypressed(key)
     if key == 'escape' then
         love.event.quit()
     end
+
+    -- if we hit space and are on the ground...
+    if key == 'space' and characterDY == 0 then
+        characterDY = JUMP_VELOCITY
+        currentAnimation = jumpAnimation
+    end
+
+    -- allow us to regenerate the level at will
+    if key == 'r' then
+        tileset = math.random(#tilesets)
+        topperset = math.random(#toppersets)
+    end
 end
 
 function love.update(dt)
+    -- apply velocity to character Y
+    characterDY = characterDY + GRAVITY * dt
+    characterY = characterY + characterDY * dt
+
+    -- if we've gone below the map limit, set DY to 0
+    if characterY > ((7 - 1) * TILE_SIZE) - CHARACTER_HEIGHT then
+        characterY = ((7 - 1) * TILE_SIZE) - CHARACTER_HEIGHT
+        characterDY = 0
+    end
+
     -- update the animation so it scrolls through the right frames
     currentAnimation:update(dt)
 
     -- update camera scroll based on user input
     if love.keyboard.isDown('left') then
         characterX = characterX - CHARACTER_MOVE_SPEED * dt
-        currentAnimation = movingAnimation
+
+        if characterDY == 0 then
+            currentAnimation = movingAnimation
+        end
+
         direction = 'left'
     elseif love.keyboard.isDown('right') then
         characterX = characterX + CHARACTER_MOVE_SPEED * dt
-        currentAnimation = movingAnimation
+        
+        if characterDY == 0 then
+            currentAnimation = movingAnimation
+        end
+
         direction = 'right'
     else
         currentAnimation = idleAnimation
@@ -142,7 +194,14 @@ function love.draw()
         for y = 1, mapHeight do
             for x = 1, mapWidth do
                 local tile = tiles[y][x]
-                love.graphics.draw(tilesheet, quads[tile.id], (x - 1) * TILE_SIZE, (y - 1) * TILE_SIZE)
+                love.graphics.draw(tilesheet, tilesets[tileset][tile.id], 
+                    (x - 1) * TILE_SIZE, (y - 1) * TILE_SIZE)
+
+                -- draw a topper on top of the tile if it contains the flag for it
+                if tile.topper then
+                    love.graphics.draw(topperSheet, toppersets[topperset][tile.id], 
+                        (x - 1) * TILE_SIZE, (y - 1) * TILE_SIZE)
+                end
             end
         end
 
@@ -161,4 +220,45 @@ function love.draw()
             -- lastly, the origin offsets relative to 0,0 on the sprite (set here to the sprite's center)
             CHARACTER_WIDTH / 2, CHARACTER_HEIGHT / 2)
     push.finish()
+end
+
+function generateLevel()
+    local tiles = {}
+
+    -- create 2D array completely empty first so we can just change tiles as needed
+    for y = 1, mapHeight do
+        table.insert(tiles, {})
+
+        for x = 1, mapWidth do
+            table.insert(tiles[y], {
+                id = SKY,
+                topper = false
+            })
+        end
+    end
+
+    -- iterate over X at the top level to generate the level in columns instead of rows
+    for x = 1, mapWidth do
+        -- random chance for a pillar
+        local spawnPillar = math.random(5) == 1
+        
+        if spawnPillar then
+            for pillar = 4, 6 do
+                tiles[pillar][x] = {
+                    id = GROUND,
+                    topper = pillar == 4 and true or false
+                }
+            end
+        end
+
+        -- always generate ground
+        for ground = 7, mapHeight do
+            tiles[ground][x] = {
+                id = GROUND,
+                topper = (not spawnPillar and ground == 7) and true or false 
+            }
+        end
+    end
+
+    return tiles
 end

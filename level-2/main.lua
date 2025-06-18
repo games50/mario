@@ -110,7 +110,7 @@ function love.load()
 
     tiles = generateLevel()
 
-    love.window.setTitle('tiles0')
+    love.window.setTitle('level-2')
 
     love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT, {
         fullscreen = false,
@@ -239,6 +239,11 @@ function generateLevel()
 
     -- iterate over X at the top level to generate the level in columns instead of rows
     for x = 1, mapWidth do
+        -- random chance to not spawn anything on this column; a chasm
+        if math.random(7) == 1 then
+            goto continue
+        end
+
         -- random chance for a pillar
         local spawnPillar = math.random(5) == 1
         
@@ -258,6 +263,8 @@ function generateLevel()
                 topper = (not spawnPillar and ground == 7) and true or false 
             }
         end
+
+        ::continue::
     end
 
     return tiles

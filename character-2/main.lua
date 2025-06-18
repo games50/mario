@@ -71,7 +71,7 @@ function love.load()
         end
     end
 
-    love.window.setTitle('tiles0')
+    love.window.setTitle('character-2')
 
     love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT, {
         fullscreen = false,

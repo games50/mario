@@ -115,7 +115,7 @@ function PlayState:spawnEnemies()
                         snail = Snail {
                             texture = 'creatures',
                             x = (x - 1) * TILE_SIZE,
-                            y = (y - 2) * TILE_SIZE + 2,
+                            y = (y - 2) * TILE_SIZE,
                             width = 16,
                             height = 16,
                             stateMachine = StateMachine {

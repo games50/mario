@@ -20,6 +20,9 @@ VIRTUAL_HEIGHT = 144
 
 TILE_SIZE = 16
 
+-- camera scroll speed
+CAMERA_SCROLL_SPEED = 40
+
 -- tile ID constants
 SKY = 2
 GROUND = 1
@@ -27,7 +30,7 @@ GROUND = 1
 function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest')
     math.randomseed(os.time())
-    
+
     tiles = {}
     
     -- tilesheet image and quads for it, which will map to our IDs
@@ -36,6 +39,9 @@ function love.load()
     
     mapWidth = 20
     mapHeight = 20
+
+    -- amount by which we'll translate the scene to emulate a camera
+    cameraScroll = 0
 
     backgroundR = math.random(255) / 255
     backgroundG = math.random(255) / 255
@@ -52,7 +58,7 @@ function love.load()
         end
     end
 
-    love.window.setTitle('tiles0')
+    love.window.setTitle('tiles-1')
 
     love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT, {
         fullscreen = false,
@@ -73,8 +79,22 @@ function love.keypressed(key)
     end
 end
 
+function love.update(dt)
+    -- update camera scroll based on user input
+    if love.keyboard.isDown('left') then
+        cameraScroll = cameraScroll - CAMERA_SCROLL_SPEED * dt
+    elseif love.keyboard.isDown('right') then
+        cameraScroll = cameraScroll + CAMERA_SCROLL_SPEED * dt
+    end
+end
+
 function love.draw()
     push.start()
+        -- translate scene by camera scroll amount; negative shifts have the effect of making it seem
+        -- like we're actually moving right and vice-versa; note the use of math.floor, as rendering
+        -- fractional camera offsets with a virtual resolution will result in weird pixelation and artifacting
+        -- as things are attempted to be drawn fractionally and then forced onto a small virtual canvas
+        love.graphics.translate(-math.floor(cameraScroll), 0)
         love.graphics.clear(backgroundR, backgroundG, backgroundB, 1)
         
         for y = 1, mapHeight do

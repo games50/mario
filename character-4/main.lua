@@ -22,51 +22,30 @@ VIRTUAL_HEIGHT = 144
 
 TILE_SIZE = 16
 
--- number of tiles in each tile set
-TILE_SET_WIDTH = 5
-TILE_SET_HEIGHT = 4
-
--- number of tile sets in sheet
-TILE_SETS_WIDE = 6
-TILE_SETS_TALL = 10
-
--- number of topper sets in sheet
-TOPPER_SETS_WIDE = 6
-TOPPER_SETS_TALL = 18
-
 CHARACTER_WIDTH = 16
 CHARACTER_HEIGHT = 20
 
 CHARACTER_MOVE_SPEED = 40
 JUMP_VELOCITY = -300
 
-GRAVITY = 980
+GRAVITY = 900
 
 -- camera scroll speed
 CAMERA_SCROLL_SPEED = 40
 
 -- tile ID constants
-SKY = 5
-GROUND = 3
+SKY = 2
+GROUND = 1
 
 function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest')
     math.randomseed(os.time())
+
+    tiles = {}
     
     -- tilesheet image and quads for it, which will map to our IDs
     tilesheet = love.graphics.newImage('tiles.png')
     quads = GenerateQuads(tilesheet, TILE_SIZE, TILE_SIZE)
-
-    topperSheet = love.graphics.newImage('tile_tops.png')
-    topperQuads = GenerateQuads(topperSheet, TILE_SIZE, TILE_SIZE)
-
-    -- divide quad tables into tile sets
-    tilesets = GenerateTileSets(quads, TILE_SETS_WIDE, TILE_SETS_TALL, TILE_SET_WIDTH, TILE_SET_HEIGHT)
-    toppersets = GenerateTileSets(topperQuads, TOPPER_SETS_WIDE, TOPPER_SETS_TALL, TILE_SET_WIDTH, TILE_SET_HEIGHT)
-
-    -- random tile set and topper set for the level
-    tileset = math.random(#tilesets)
-    topperset = math.random(#toppersets)
 
     -- texture for the character
     characterSheet = love.graphics.newImage('character.png')
@@ -108,9 +87,18 @@ function love.load()
     backgroundG = math.random(255) / 255
     backgroundB = math.random(255) / 255
 
-    tiles = generateLevel()
+    for y = 1, mapHeight do
+        table.insert(tiles, {})
+        
+        for x = 1, mapWidth do
+            -- sky and bricks; this ID directly maps to whatever quad we want to render
+            table.insert(tiles[y], {
+                id = y < 7 and SKY or GROUND
+            })
+        end
+    end
 
-    love.window.setTitle('level0')
+    love.window.setTitle('character-4')
 
     love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT, {
         fullscreen = false,
@@ -134,12 +122,6 @@ function love.keypressed(key)
     if key == 'space' and characterDY == 0 then
         characterDY = JUMP_VELOCITY
         currentAnimation = jumpAnimation
-    end
-
-    -- allow us to regenerate the level at will
-    if key == 'r' then
-        tileset = math.random(#tilesets)
-        topperset = math.random(#toppersets)
     end
 end
 
@@ -194,14 +176,7 @@ function love.draw()
         for y = 1, mapHeight do
             for x = 1, mapWidth do
                 local tile = tiles[y][x]
-                love.graphics.draw(tilesheet, tilesets[tileset][tile.id], 
-                    (x - 1) * TILE_SIZE, (y - 1) * TILE_SIZE)
-
-                -- draw a topper on top of the tile if it contains the flag for it
-                if tile.topper then
-                    love.graphics.draw(topperSheet, toppersets[topperset][tile.id], 
-                        (x - 1) * TILE_SIZE, (y - 1) * TILE_SIZE)
-                end
+                love.graphics.draw(tilesheet, quads[tile.id], (x - 1) * TILE_SIZE, (y - 1) * TILE_SIZE)
             end
         end
 
@@ -220,23 +195,4 @@ function love.draw()
             -- lastly, the origin offsets relative to 0,0 on the sprite (set here to the sprite's center)
             CHARACTER_WIDTH / 2, CHARACTER_HEIGHT / 2)
     push.finish()
-end
-
-function generateLevel()
-    local tiles = {}
-
-    for y = 1, mapHeight do
-        table.insert(tiles, {})
-        
-        for x = 1, mapWidth do
-            
-            -- sky and bricks; this ID directly maps to whatever quad we want to render
-            table.insert(tiles[y], {
-                id = y < 7 and SKY or GROUND,
-                topper = y == 7 and true or false
-            })
-        end
-    end
-
-    return tiles
 end

@@ -98,7 +98,7 @@ function love.load()
     -- direction the character is facing
     direction = 'right'
     
-    mapWidth = 50
+    mapWidth = 20
     mapHeight = 20
 
     -- amount by which we'll translate the scene to emulate a camera
@@ -110,7 +110,7 @@ function love.load()
 
     tiles = generateLevel()
 
-    love.window.setTitle('level2')
+    love.window.setTitle('level-0')
 
     love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT, {
         fullscreen = false,
@@ -225,46 +225,17 @@ end
 function generateLevel()
     local tiles = {}
 
-    -- create 2D array completely empty first so we can just change tiles as needed
     for y = 1, mapHeight do
         table.insert(tiles, {})
-
+        
         for x = 1, mapWidth do
+            
+            -- sky and bricks; this ID directly maps to whatever quad we want to render
             table.insert(tiles[y], {
-                id = SKY,
-                topper = false
+                id = y < 7 and SKY or GROUND,
+                topper = y == 7 and true or false
             })
         end
-    end
-
-    -- iterate over X at the top level to generate the level in columns instead of rows
-    for x = 1, mapWidth do
-        -- random chance to not spawn anything on this column; a chasm
-        if math.random(7) == 1 then
-            goto continue
-        end
-
-        -- random chance for a pillar
-        local spawnPillar = math.random(5) == 1
-        
-        if spawnPillar then
-            for pillar = 4, 6 do
-                tiles[pillar][x] = {
-                    id = GROUND,
-                    topper = pillar == 4 and true or false
-                }
-            end
-        end
-
-        -- always generate ground
-        for ground = 7, mapHeight do
-            tiles[ground][x] = {
-                id = GROUND,
-                topper = (not spawnPillar and ground == 7) and true or false 
-            }
-        end
-
-        ::continue::
     end
 
     return tiles

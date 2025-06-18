@@ -15,13 +15,13 @@ function Player:init(def)
     self.score = 0
 end
 
--- function Player:update(dt)
---     Entity.update(self, dt)
--- end
+function Player:update(dt)
+    Entity.update(self, dt)
+end
 
--- function Player:render()
---     Entity.render(self)
--- end
+function Player:render()
+    Entity.render(self)
+end
 
 function Player:checkLeftCollisions(dt)
     -- check for left two tiles collision
@@ -38,7 +38,8 @@ function Player:checkLeftCollisions(dt)
         local collidedObjects = self:checkObjectCollisions()
         self.y = self.y + 1
 
-        -- reset X if new collided object
+        -- reset X if new collided object (not walking atop)
+        -- prevents clipping to top of blocks when jumping up into them
         if #collidedObjects > 0 then
             self.x = self.x + PLAYER_WALK_SPEED * dt
         end
@@ -60,7 +61,8 @@ function Player:checkRightCollisions(dt)
         local collidedObjects = self:checkObjectCollisions()
         self.y = self.y + 1
 
-        -- reset X if new collided object
+        -- reset X if new collided object (not walking atop)
+        -- prevents clipping to top of blocks when jumping up into them
         if #collidedObjects > 0 then
             self.x = self.x - PLAYER_WALK_SPEED * dt
         end
